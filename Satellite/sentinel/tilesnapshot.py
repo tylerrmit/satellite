@@ -64,13 +64,18 @@ class tilesnapshot(object):
         
         # List available layers
         self.layerFilesFilter = self.basePath + "/timeseries/" + str(self.x) + "-" + str(self.y) + "-*-" + self.dateStr + ".png"
+        #print("Layer List Filter: " + self.layerFilesFilter)
         self.layerList = glob.glob(self.layerFilesFilter)
+        #print("Layer List: ")
+        #print(self.layerList)
         
         self.layers = dict()
         self.numpy_layers = dict()
+        self.numpy_raw = dict()
         
         # Load each available layer into a "layers" dictionary
         for i in range(len(self.layerList)):
+            #print("Loading layer: " + str(i))
             self.loadLayer(self.layerList[i])
             
         # Load sugar cane mask
@@ -92,8 +97,9 @@ class tilesnapshot(object):
         
         # Detect clouds!
         print("Detecting clouds for " + dateStr)
-        cloud_detector  = S2PixelCloudDetector(threshold=0.4, average_over=4, dilation_size=2)
-        self.cloud_mask = cloud_detector.get_cloud_masks(self.numpy_bands)
+        cloud_detector  = S2PixelCloudDetector(threshold=0.7, average_over=4, dilation_size=2)
+        self.cloud_probs = cloud_detector.get_cloud_probability_maps(np.array(self.numpy_bands))
+        self.cloud_masks = cloud_detector.get_cloud_masks(self.numpy_bands)
         print("... done")
         
     def loadLayer(self, fullPath, layerName=None):
@@ -106,7 +112,9 @@ class tilesnapshot(object):
         img = Image.open(fullPath)
         self.layers[layerName] = img.load()
         # Convert the layer into a numpy array
-        self.numpy_layers[layerName] = np.array([convert_pixel_65535(xi) for xi in np.asarray(PIL.Image.open(fullPath))])
+        #self.numpy_layers[layerName] = np.asarray(PIL.Image.open(fullPath))
+        self.numpy_raw[layerName] = np.asarray(PIL.Image.open(fullPath))
+        self.numpy_layers[layerName] = self.numpy_raw[layerName] / 20000 # Do not ask me why it's not 65536
     
         
     def print(self):
@@ -122,7 +130,7 @@ class tilesnapshot(object):
         print("Numpy Layers:")
         pprint.pprint(self.numpy_layers)
         print("Cloud Mask:")
-        pprint.pprint(self.cloud_mask)
+        pprint.pprint(self.cloud_masks)
         print("Numpy bands shape:")
         print(self.numpy_bands.shape)
         

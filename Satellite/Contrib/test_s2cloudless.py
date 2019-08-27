@@ -44,5 +44,5 @@ cloud_detector  = S2PixelCloudDetector(threshold=0.4, average_over=4, dilation_s
 cloud_masks = cloud_detector.get_cloud_masks(numpy_bands)
 print("... done")
 
-print(cloud_masks[1])
+print(cloud_masks[0])
 

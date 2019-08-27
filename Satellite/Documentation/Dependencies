@@ -14,3 +14,5 @@ pip install s2cloudless
 pip install geopy
 
 pip install matplotlib
+
+pip install seaborn
