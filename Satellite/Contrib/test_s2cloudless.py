@@ -45,3 +45,4 @@ cloud_masks = cloud_detector.get_cloud_masks(numpy_bands)
 print("... done")
 
 print(cloud_masks[1])
+
