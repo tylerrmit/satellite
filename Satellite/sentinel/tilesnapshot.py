@@ -94,6 +94,7 @@ class tilesnapshot(object):
         print("Detecting clouds for " + dateStr)
         cloud_detector  = S2PixelCloudDetector(threshold=0.4, average_over=4, dilation_size=2)
         self.cloud_mask = cloud_detector.get_cloud_masks(self.numpy_bands)
+        print("... done")
         
     def loadLayer(self, fullPath, layerName=None):
         # Find the actual filename part of the path
@@ -118,8 +119,8 @@ class tilesnapshot(object):
         self.geometry.print()
         #print("Layers:")
         #pprint.pprint(self.layers)
-        #print("Numpy Layers:")
-        #pprint.pprint(self.numpy_layers)
+        print("Numpy Layers:")
+        pprint.pprint(self.numpy_layers)
         print("Cloud Mask:")
         pprint.pprint(self.cloud_mask)
         print("Numpy bands shape:")
