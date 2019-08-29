@@ -104,6 +104,14 @@ class tilesnapshot(object):
         self.sugarCaneMaskPath = self.basePath + "/masks/sugarcane-region-mask.png"
         self.loadLayer(self.sugarCaneMaskPath, 'SugarMask')
 
+
+    def loadCloudMask(self):
+        '''
+        Load cloud mask as 'CloudMask' layer
+        '''
+        self.cloudMaskPath = self.basePath + "/masks/cloud_masks/" + self.dateStr + ".png"
+        self.loadLayer(self.cloudMaskPath, 'CloudMask')
+        
         
     def loadLayer(self, fullPath, layerName):
         '''
