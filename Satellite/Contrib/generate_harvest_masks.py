@@ -67,8 +67,10 @@ for i in range(len(timeSeriesList)):
     other_count   = 0
     
     # Offset the Sugar Mask which is mis-aligned
-    y_offset = 50
-    x_offset = 5
+    #y_offset = 50
+    #x_offset = 5
+    y_offset = 0
+    x_offset = 0
             
     for y in range(size_y):
         for x in range(size_x):

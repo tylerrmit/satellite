@@ -4,11 +4,13 @@ Created on 20 Aug 2019
 @author: User
 '''
 
-from PIL import Image, ImageDraw
-import glob
+from PIL import Image
 import os
+
 mask=Image.open("data/sentinel-2a-tile-7680x-10240y/masks/sugarcane-region-mask.png")
 arr= os.listdir("data/sentinel-2a-tile-7680x-10240y/timeseries")
+os.makedirs("data/harvest_demo", exist_ok=True)
+
 for k in arr:
     if "TCI" in k:
         tile= Image.open("data/sentinel-2a-tile-7680x-10240y/timeseries/"+k)
