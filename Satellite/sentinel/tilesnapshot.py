@@ -112,7 +112,15 @@ class tilesnapshot(object):
         self.cloudMaskPath = self.basePath + "/masks/cloud_masks/" + self.dateStr + ".png"
         self.loadLayer(self.cloudMaskPath, 'CloudMask')
         
+
+    def loadCrudeCloudMask(self):
+        '''
+        Load cloud mask as 'CloudMask' layer
+        '''
+        self.cloudMaskPath = self.basePath + "/masks/crude_cloud_masks/" + self.dateStr + ".png"
+        self.loadLayer(self.cloudMaskPath, 'CrudeCloudMask')
         
+             
     def loadLayer(self, fullPath, layerName):
         '''
         Load an individual layer by fullPath and layerName
