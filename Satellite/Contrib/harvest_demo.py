@@ -24,4 +24,4 @@ for k in arr:
                     channelPortion=(green/(green+red+blue))
                     if channelPortion <0.32:
                         pixels[y,x]=(255,0,0)
-        tile.save("data/harvested/"+date+".png")
+        tile.save("data/harvest_demo/"+date+".png")
