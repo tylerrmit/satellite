@@ -65,7 +65,11 @@ class tilesnapshot(object):
         
         # Load the metadata for this snapshot as a child object
         self.metadataPath     = self.basePath + "/metadata/" + dateStr + ".json"
-        self.metadata         = metadata(self.metadataPath)
+        self.metadataPath_c   = self.basePath + "/metadata/" + dateStr + "-cloud.json"
+        if (os.path.exists(self.metadataPath_c)):
+            self.metadata     = metadata(self.metadataPath_c, clouds=1)
+        else:
+            self.metadata     = metadata(self.metadataPath)
         
         # List available layers
         self.layerFilesFilter = self.basePath + "/timeseries/" + str(self.tile_x) + "-" + str(self.tile_y) + "-*-" + self.dateStr + ".png"
@@ -188,17 +192,20 @@ class tilesnapshot(object):
     
         img = Image.new('RGBA', (self.size_x, self.size_y), color = 'black')
 
+        self.cloudCount = 0
+        
         for x in range(self.size_x):
             for y in range(self.size_y):
                 if (self.cloud_masks[0][y][x] > 0):
                     img.putpixel((x, y), (0,0,0,255)) # Opaque
+                    self.cloudCount += 1
                 else:
                     img.putpixel((x, y), (0,0,0,0))   # Transparent
     
         output_file = save_location + "\\" + self.dateStr + ".png"
         print("Writing [" + output_file + "]")    
         img.save(output_file)
-        
+        self.metadata.setCloudCount(self.cloudCount)
         
     def print(self):
         '''
