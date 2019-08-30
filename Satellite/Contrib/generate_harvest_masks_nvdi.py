@@ -2,6 +2,14 @@
 Created on 30 Aug 2019
 
 @author: Tyler
+
+Generate a series of "harvest" masks, just looking at one tilesnapshot at a time
+- Yellow (255, 255,   0, 255) => masked by cloud
+- Black  (  0,   0,   0, 255) => masked by sugarcane-region
+- Red    (255,   0,   0, 255) => low vegetation, maybe harvested if that's a stable change
+- Other  (  R,   G,   B, 255) => none of the above, show the original TCI (true colour image) pixel
+
+Yes I'm aware I'm not doing anything particularly creative with the alpha channel right now
 '''
 
 import glob
