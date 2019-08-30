@@ -10,9 +10,9 @@ Masked pixels don't count
 The first time we see a 'red' (low-vegetation) pixel, it doesn't count as harvested
 
 We are looking for 'red' pixels where:
-- the preceding "pre_window" snapshots have the same pixel as high-vegetation
-- the following "post_window" snapshots have the same pixel as low-vegetation
-- it is assumed that any pixel that is masked by cloud has the same value as the most recent good snapshot
+- the preceding "pre_window"  snapshots have high-vegetation for the pixel
+- the following "post_window" snapshots have low -vegetation for the pixel
+- it is assumed that any pixel that is masked by cloud has the same value as the most recent snapshot when the pixel was not obscured by cloud
 '''
 
 # Imports
@@ -29,8 +29,8 @@ tile_x                     = 7680
 tile_y                     = 10240
 size_x                     = 512  # Width of the tile in pixels
 size_y                     = 512  # Height of the tile in pixels
-pre_window                 = 1    # How many previous snapshots must have "high-vegetation" to count the change to "low-vegetation" (was there vegetation before?)
-post_window                = 1    # How many following snapshots must have "low-vegetation" to count the change to "low-vegetation" (is it stable?)
+pre_window                 = 2    # How many previous snapshots must have "high-vegetation" to count the change to "low-vegetation" (was there vegetation before?)
+post_window                = 2    # How many following snapshots must have "low-vegetation" to count the change to "low-vegetation" (is it stable?)
 
 # Base location for data   
 basePath = "data\\sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y"
@@ -171,13 +171,9 @@ for i in range(len(timeSeriesList)):
     current_index = this_index - min_index
     last_index    = max_index  - min_index
     
-    count_cloud_adjust = 0
-    count_delta        = 0
-    
+    count_cloud_adjust      = 0
+    count_deltas            = 0
     count_current_harvested = 0
-    
-    #for s in range(min_index, max_index + 1):
-    #    print("INDEX DEBUG i=" + str(i) + " min_index=" + str(min_index) + " s=" + str(s) + " -> " + str(i - min_index + s - 1))
         
     # For each pixel
     for y in range(size_y):
@@ -207,6 +203,7 @@ for i in range(len(timeSeriesList)):
                         preceding_harvested   += 1
                     else:
                         preceding_unharvested += 1
+                    preceding_available += 1
                 
             # How many of the following snapshots had the pixel harvested/unharvested?
             following_harvested   = 0
@@ -216,47 +213,38 @@ for i in range(len(timeSeriesList)):
             for t in range(current_index, last_index + 1):
                 if ((t >= current_index) and (t <= last_index) and (t-1 > 0)): # New language paranoia
                     # If the pixel is cloudy, assume the last thing we had for it
-                    #print("DEBUG PREADJUST " + str(i) + " (" + str(y) + "," + str(x) + ") t=" + str(t) + " [" + str(pixel_window[t]) + "] t-1=" + str(t-1) + " [" + str(pixel_window[t-1]) + "] current_index=" + str(current_index) + " last_index=" + str(last_index) + " is_cloudy_prev=" + str(is_cloudy(pixel_window[t-1])) + " is_cloudy_curr=" + str(is_cloudy(pixel_window[t])))
-                    #pprint.pprint(pixel_window)
                     if ((is_cloudy(pixel_window[t])) and (t - 1 >= 0) and not (is_cloudy(pixel_window[t-1]))):
                         # Update the window copy of this pixel, use the value of the previous snapshot
                         # If THAT was a cloud, we've already made a similar adjustment to it!
-                        #print("DEBUG ADJUST t=" + str(t) + ", t-1=" + str(t-1) + "(" + str(y) + "," + str(x) + ") " + str(pixel_window[t]) + " <- " + str(pixel_window[t-1]))
                         pixel_window[t] = pixel_window[t-1]
-                        #pprint.pprint(pixel_window)
                         # Update the master "layer" copy of this pixel so that the correction propagates
-                        #pprint.pprint(tileSnapshotList[i + t - current_index].layers['HarvestMask'][y,x])
                         tileSnapshotList[i + t - current_index].layers['HarvestMask'][y,x] = pixel_window[t]
-                        #pprint.pprint(tileSnapshotList[i + t - current_index].layers['HarvestMask'][y,x])
-                        if (t == current_index + 1):
-                            count_cloud_adjust += 1
+                        count_cloud_adjust += 1
                         
-                    # After applying prior-to-cloud-is-sticky assumption, is it harvested? 
-                    if (is_harvested(pixel_window[t])):
-                        following_harvested   += 1
-                    else:
-                        following_unharvested += 1
-                                  
-            #if (is_harvested(pixel_window[current_index])):      
-            #print("DEBUG 6 (" + str(y) + "," + str(x) + "): " + "t=" + str(t) + " - [fh=" + str(following_harvested) + ", fu=" + str(following_unharvested) + ", ph=" + str(preceding_harvested) + ", pu=" + str(preceding_unharvested) + ", pa=" + str(preceding_available) + ", ih=" + str(is_harvested(pixel_window[current_index])) + ", ic=" + str(is_cloudy(pixel_window[current_index])) + "]")
+                    # After applying prior-to-cloud-is-sticky assumption, is it harvested?
+                    if (t > current_index):
+                        if (is_harvested(pixel_window[t])):
+                            following_harvested   += 1
+                        else:
+                            following_unharvested += 1
+                        following_available += 1
                                
-            # So, knowing all that, was it harvested?
+            # So, knowing all that, was it harvested?               
             if (
-                is_harvested(pixel_window[current_index]) and
-                (preceding_available > 0) and
-                (preceding_unharvested == preceding_available) and 
-                (following_harvested   == following_available)
+                (preceding_available)                          and
+                (is_harvested(pixel_window[current_index]))    and
+                (preceding_unharvested == preceding_available) and
+                (following_harvested   >= following_available)
             ):
                 # Yes!  Everything before was unharvested (high vegetation) and everything after was harvested (low vegetation)
                 # If we have clouds serveral days in a row, this is vulnerable to false positives at the moment
                 img.putpixel((y, x), (0, 0, 255, 255))  # Blue
-                count_delta += 1
-                #print("DEBUG 7 (" + str(y) + "," + str(x) + "): " + "t=" + str(t))
+                count_deltas += 1
             else:
                 img.putpixel((y, x), tileSnapshotList[i].layers['HarvestMask'][y,x])
 
                 
-    print("Writing [" + output_file + "] cloud_adjust [" + str(count_cloud_adjust) + "] deltas [" + str(count_delta) + "] current_harvested [" + str(count_current_harvested) + "]")
-    img.save(output_file)        
+    print("Writing [" + output_file + "] cloud_adjust [" + str(count_cloud_adjust) + "] deltas [" + str(count_deltas) + "] current_harvested [" + str(count_current_harvested) + "]")
+    img.save(output_file)    
                 
 print("Finished!")
