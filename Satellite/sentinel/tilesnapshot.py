@@ -120,10 +120,18 @@ class tilesnapshot(object):
 
     def loadCrudeCloudMask(self):
         '''
-        Load cloud mask as 'CloudMask' layer
+        Load cloud mask as 'CrudeCloudMask' layer
         '''
         self.cloudMaskPath = self.basePath + "/masks/crude_cloud_masks/" + self.dateStr + ".png"
         self.loadLayer(self.cloudMaskPath, 'CrudeCloudMask')
+    
+    
+    def loadHarvestMask(self):
+        '''
+        Load harvest mask as 'HarvestMask' layer
+        '''
+        self.harvestMaskPath = self.basePath + "/masks/harvested_nvdi_masks/" + self.dateStr + ".png"
+        self.loadLayer(self.harvestMaskPath, 'HarvestMask')
         
              
     def loadLayer(self, fullPath, layerName):
