@@ -22,14 +22,17 @@ threshold = 0.33
 cloudMask = 'CloudMask'
 
 # Base location for data   
-basePath = "data\\sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y"
+#basePath = "data\\sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y"
+basePath = os.path.join("data", "sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y")
 
 # Location for output
-save_location = "data\\sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y\\Masks\\harvested_masks"
+#save_location = "data\\sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y\\Masks\\harvested_masks"
+save_location = os.path.join("data", "sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y", "Masks", "harvested_masks")
 os.makedirs(save_location, exist_ok=True)
 
 # List available snapshots
-timeSeriesFilter = basePath + "\\timeseries\\" + str(tile_x) + "-" + str(tile_y) + "-B01-*.png"
+#timeSeriesFilter = basePath + "\\timeseries\\" + str(tile_x) + "-" + str(tile_y) + "-B01-*.png"
+timeSeriesFilter = os.path.join(basePath, "timeseries", str(tile_x) + "-" + str(tile_y) + "-B01-*.png")
 timeSeriesList   = glob.glob(timeSeriesFilter)
 
 # Process each snapshot
@@ -98,7 +101,9 @@ for i in range(len(timeSeriesList)):
                 other_count += 1
                 img.putpixel((y, x), (red, green, blue, 255))
     
-    output_file = save_location + "\\" + dateStr + ".png"
+    #output_file = save_location + "\\" + dateStr + ".png"
+    output_file = os.path.join(save_location, dateStr + ".png")
+
     print("Writing [" + output_file + "] Sugar: " + str(sugar_count) + " Cloud: " + str(cloud_count) + " Harvest: " + str(harvest_count) + " Other: " + str(other_count))
     img.save(output_file)
     

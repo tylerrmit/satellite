@@ -20,7 +20,8 @@ size_y = 512
 cloud_magic_threshold = 4000
 
 # Location for output
-save_location = "data\\sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y\\Masks\\crude_cloud_masks"
+#save_location = "data\\sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y\\Masks\\crude_cloud_masks"
+save_location = os.path.join("data", "sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y", "Masks", "crude_cloud_masks")
 os.makedirs(save_location, exist_ok=True)
 
 timeseries_files = os.listdir("data/sentinel-2a-tile-7680x-10240y/timeseries")
@@ -46,7 +47,8 @@ for filename in timeseries_files:
                 else:
                     img.putpixel((y, x), (0,0,0,0))   # Transparent
         
-        output_file = save_location + "\\" + dateStr + ".png"
+        #output_file = save_location + "\\" + dateStr + ".png"
+        output_file = os.path.join(save_location, dateStr + ".png")
         print("Writing [" + output_file + "]")
         img.save(output_file)
     

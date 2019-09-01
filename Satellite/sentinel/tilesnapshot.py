@@ -195,7 +195,8 @@ class tilesnapshot(object):
         
         # Save cloud mask to disk as black PNG that is transparent where there is no cloud,
         # and opaque where the probability of cloud > threshold
-        save_location = "data\\sentinel-2a-tile-" + str(self.tile_x) + "x-" + str(self.tile_y) + "y\\Masks\\cloud_masks"
+        #save_location = "data\\sentinel-2a-tile-" + str(self.tile_x) + "x-" + str(self.tile_y) + "y\\Masks\\cloud_masks"
+        save_location = os.path.join("data", "sentinel-2a-tile-" + str(self.tile_x) + "x-" + str(self.tile_y) + "y", "Masks", "cloud_masks")
         os.makedirs(save_location, exist_ok=True)
     
         img = Image.new('RGBA', (self.size_x, self.size_y), color = 'black')
@@ -210,7 +211,9 @@ class tilesnapshot(object):
                 else:
                     img.putpixel((x, y), (0,0,0,0))   # Transparent
     
-        output_file = save_location + "\\" + self.dateStr + ".png"
+        #output_file = save_location + "\\" + self.dateStr + ".png"
+        output_file = os.path.join(save_location, self.dateStr + ".png")
+
         print("Writing [" + output_file + "]")    
         img.save(output_file)
         self.metadata.setCloudCount(self.cloudCount)

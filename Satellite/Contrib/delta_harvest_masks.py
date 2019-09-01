@@ -33,10 +33,12 @@ pre_window                 = 2    # How many previous snapshots must have "high-
 post_window                = 2    # How many following snapshots must have "low-vegetation" to count the change to "low-vegetation" (is it stable?)
 
 # Base location for data   
-basePath = "data\\sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y"
+#basePath = "data\\sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y"
+basePath = os.path.join("data", "sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y")
 
 # Location for output - create this directory if it does not already exist
-save_location = "data\\sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y\\output\\harvested"
+#save_location = "data\\sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y\\output\\harvested"
+save_location = os.path.join("data", "sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y", "Masks", "harvested")
 os.makedirs(save_location, exist_ok=True)
 
 
@@ -70,7 +72,8 @@ def is_cloudy(pixel):
 
 # List available snapshots
 # Just look for the "B01" image as an indicator of which dates are available
-timeSeriesFilter = basePath + "\\timeseries\\" + str(tile_x) + "-" + str(tile_y) + "-B01-*.png"
+#timeSeriesFilter = basePath + "\\timeseries\\" + str(tile_x) + "-" + str(tile_y) + "-B01-*.png"
+timeSeriesFilter = os.path.join(basePath, "timeseries", str(tile_x) + "-" + str(tile_y) + "-B01-*.png")
 timeSeriesList   = glob.glob(timeSeriesFilter)
 
 # Initialize a "dictionary" of tilesnapshots, so we can compare pixels across time within a "window"
@@ -163,6 +166,7 @@ for i in range(len(timeSeriesList)):
 
     # Record where output will be written
     output_file = save_location + "\\" + dateStr + ".png"
+    
     
     # We will store a list of pixels from 0 => last snapshot included in the window
     pixel_window = []

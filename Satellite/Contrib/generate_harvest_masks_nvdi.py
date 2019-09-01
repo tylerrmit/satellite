@@ -34,15 +34,18 @@ neighbourhood_passes       = 7  # How many times to do a pass over the neighbour
 cloudMask = 'CloudMask'
 
 # Base location for data   
-basePath = "data\\sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y"
+#basePath = "data\\sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y"
+basePath = os.path.join("data", "sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y")
 
 # Location for output - create this directory if it does not already exist
-save_location = "data\\sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y\\Masks\\harvested_nvdi_masks"
+#save_location = "data\\sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y\\Masks\\harvested_nvdi_masks"
+save_location = os.path.join("data", "sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y", "Masks", "harvested_nvdi_masks")
 os.makedirs(save_location, exist_ok=True)
 
 # List available snapshots
 # Just look for the "B01" image as an indicator of which dates are available
-timeSeriesFilter = basePath + "\\timeseries\\" + str(tile_x) + "-" + str(tile_y) + "-B01-*.png"
+#timeSeriesFilter = basePath + "\\timeseries\\" + str(tile_x) + "-" + str(tile_y) + "-B01-*.png"
+timeSeriesFilter = os.path.join(basePath, "timeseries", str(tile_x) + "-" + str(tile_y) + "-B01-*.png")
 timeSeriesList   = glob.glob(timeSeriesFilter)
 
 # Helper function to check if a pixel is harvested
@@ -82,7 +85,8 @@ for i in range(len(timeSeriesList)):
     img = Image.new('RGBA', (size_x, size_y))
 
     # Record where output will be written
-    output_file = save_location + "\\" + dateStr + ".png"
+    #output_file = save_location + "\\" + dateStr + ".png"
+    output_file = os.path.join(save_location, dateStr + ".png")
     
     sugar_count   = 0
     cloud_count   = 0
