@@ -19,4 +19,4 @@ def addressGeocode(address, geoCodeUrl, outSR = "4326"):
     return "Address not geocoded: " + address
 
 Geocode = addressGeocode("49 Mount Street Eaglemont Vic 3084, Australia", geoCodeUrl)
-print Geocode
+print(Geocode)
