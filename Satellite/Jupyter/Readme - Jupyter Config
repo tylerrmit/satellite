@@ -1,0 +1,14 @@
+The Jupyter notebook reads from a config file in the same directory called "jupyter_satellites.config"
+
+It should look like this:
+
+[Jupyter_Notebooks]
+data_path=C:/Users/User/iCloudDrive/Documents/RMIT Lectures/Case Studies in Data Science/Satellites/phase-01-rev1.12/phase-01
+[Others]
+
+
+... but you'll want to customize the path so that it finds the directory containing the "data" directory on YOUR computer
+... otherwise you'll have a bad time
+
+I have deliberately EXCLUDED the [jupyter_satellites.config] from the version control repository, because all of our
+configurations will be different, and we don't want to overwrite each other's config!
