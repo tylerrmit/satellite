@@ -18,3 +18,11 @@ pip install matplotlib
 pip install seaborn
 
 pip install pyshp 
+
+
+conda install -c conda-forge jupyter_contrib_nbextensions
+conda install nb_conda
+
+jupyter nbextension enable codefolding/main
+
+conda install -c conda-forge jupyter_nbextensions_configurator

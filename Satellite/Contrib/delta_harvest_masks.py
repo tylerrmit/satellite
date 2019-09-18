@@ -18,7 +18,6 @@ We are looking for 'red' pixels where:
 # Imports
 import glob
 import os
-import pprint
 
 from PIL import Image
 
@@ -32,12 +31,10 @@ size_y                     = 512  # Height of the tile in pixels
 pre_window                 = 2    # How many previous snapshots must have "high-vegetation" to count the change to "low-vegetation" (was there vegetation before?)
 post_window                = 2    # How many following snapshots must have "low-vegetation" to count the change to "low-vegetation" (is it stable?)
 
-# Base location for data   
-#basePath = "data\\sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y"
+# Base location for data
 basePath = os.path.join("data", "sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y")
 
 # Location for output - create this directory if it does not already exist
-#save_location = "data\\sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y\\output\\harvested"
 save_location = os.path.join("data", "sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y", "Masks", "harvested")
 os.makedirs(save_location, exist_ok=True)
 
@@ -72,7 +69,6 @@ def is_cloudy(pixel):
 
 # List available snapshots
 # Just look for the "B01" image as an indicator of which dates are available
-#timeSeriesFilter = basePath + "\\timeseries\\" + str(tile_x) + "-" + str(tile_y) + "-B01-*.png"
 timeSeriesFilter = os.path.join(basePath, "timeseries", str(tile_x) + "-" + str(tile_y) + "-B01-*.png")
 timeSeriesList   = glob.glob(timeSeriesFilter)
 

@@ -5,7 +5,6 @@ Created on 19 Aug 2019
 '''
 
 import json
-import pprint
 from geopy.distance import geodesic
 
 class geometry(object):

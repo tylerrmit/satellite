@@ -7,7 +7,6 @@ Created on 20 Aug 2019
 import glob
 import os
 import pprint
-import sys
 
 from sentinel.geometry import geometry
 from sentinel.tilesnapshot import tilesnapshot
