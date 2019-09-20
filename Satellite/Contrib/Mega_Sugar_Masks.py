@@ -9,6 +9,7 @@ import geopy.distance
 import json
 import math
 import time
+import os
 
 from math import atan,degrees,sqrt
 from os import path
@@ -22,10 +23,13 @@ FULL_IMAGE_PATH ='C:/Satellites/Phase-2-2-Data/Phase02-DataDelivery/FullImage.pn
 GEO_JSON_FOLDER ='C:/Satellites/Phase-2-2-Data/Phase02-DataDelivery/geometries'
 MASTER_SUGAR_DATA_GEOJSON_PATH='C:/Satellites/Phase-2-2-Data/Phase02-DataDelivery/FullSugar.geojson'
 TILE_IMAGE_FOLDER='C:/Satellites/Phase-2-2-Data/Phase02-DataDelivery/sugarcanetiles'
-MASK_IMAGE_FOLDER='masks'
 GRID_WIDTH=512
 GRID_HEIGHT=512
 
+
+# Location for output - create this directory if it does not already exist
+MASK_IMAGE_FOLDER = os.path.join("masks", "sugarcane_region")
+os.makedirs(MASK_IMAGE_FOLDER, exist_ok=True)
 
 
 def GetBearing(pointA, pointB):
@@ -170,6 +174,8 @@ RAWNESS=1 #this is used in generating the mask image.
 # When using for generation SHOULD BE 1
 
 
+
+
 start=time.time()
 
 with open(MASTER_SUGAR_DATA_GEOJSON_PATH) as f:
@@ -188,10 +194,13 @@ def GenerateMask(tileXPos,tileYPos,tileImageFilePath,geoJSONPath,outputFileName)
         geo_json_features = json.load(f)["features"]
 
     tile=geometry.GeometryCollection([geometry.shape(feature["geometry"]).buffer(0) for feature in geo_json_features])
-    img = Image.open(tileImageFilePath)
+    
+    # Phase2 style
+    #img = Image.open(tileImageFilePath)
+    #pixels=img.load()
 
-    pixels=img.load()
-
+    # Phase1 style
+    img = Image.new('RGBA', (GRID_WIDTH, GRID_HEIGHT), color = 'black')
 
     result=geometry.GeometryCollection()
 
@@ -199,17 +208,28 @@ def GenerateMask(tileXPos,tileYPos,tileImageFilePath,geoJSONPath,outputFileName)
         #print(".", end=" ")
         if geometry.shape(k["geometry"]).intersects(tile):
             result=result.union(geometry.shape(k["geometry"]).intersection(tile))
-            
+    
+    count_opaque      = 0
+    count_transparent = 0
+    
     if tile. intersects(result):
         for i in range(0,img.size[0],RAWNESS):
             for j in range(0,img.size[1],RAWNESS):
                 lat_long=GetLatLongForCoords(GRID_WIDTH*(tileXPos)+i,GRID_HEIGHT*(tileYPos)+j)
                 if result.intersects(geometry.Point(lat_long)):
-                    pixels[i,j]=(0,0,0)
+                    # Phase2 style
+                    #pixels[i,j]=(0,0,0)
+                    
+                    # Phase1 style
+                    img.putpixel((i, j), (0,0,0,255)) # Opaque
+                    count_opaque += 1
+                else:
+                    # Phase1 style
+                    img.putpixel((i, j), (0,0,0,0))   # Transparent
+                    count_transparent += 1
+                    
         img.save(outputFileName)
-
-
-
+        print("Output Opaque [" + str(count_opaque) + "] Transparent [" + str(count_transparent) + "]")
 
 
 ranStartX=0
