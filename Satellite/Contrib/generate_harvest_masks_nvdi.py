@@ -35,14 +35,19 @@ def generate_harvest_masks_nvdi(tile_x, tile_y, size_x=512, size_y=512, threshol
     cloudMask = 'CloudMask'
 
     # Location for output - create this directory if it does not already exist
-    save_location = os.path.join("masks", "harvested_nvdi_masks")
-    os.makedirs(save_location, exist_ok=True)
+    save_location_mask = os.path.join("masks", "harvested_nvdi_masks")
+    os.makedirs(save_location_mask, exist_ok=True)
+    
+    save_location_intensity = os.path.join("masks", "nvdi_intensity")
+    os.makedirs(save_location_intensity, exist_ok=True)
 
     # List available snapshots
     # Just look for the "B01" image as an indicator of which dates are available
     timeSeriesFilter = os.path.join("sugarcanetiles", str(tile_x) + "-" + str(tile_y) + "-B01-*.png")
     timeSeriesList   = glob.glob(timeSeriesFilter)
 
+    print("Searching for tiles: [" + timeSeriesFilter + "]")
+ 
     # Private helper function to check if a pixel is harvested
     def is_harvested(img, y, x):
         if (img.getpixel((y,x)) == (255, 0, 0, 255)):
@@ -123,13 +128,17 @@ def generate_harvest_masks_nvdi(tile_x, tile_y, size_x=512, size_y=512, threshol
         t.loadCloudMask()
     
         # Load the Cloud Mask - crude
-        t.loadCrudeCloudMask()
+        #t.loadCrudeCloudMask()
     
-        # Create new mask
-        img = Image.new('RGBA', (size_x, size_y))
+        # Create output image for the mask
+        img_mask = Image.new('RGBA', (size_x, size_y))
+        
+        # Create output image for NVDI intensity from 0 to 65535
+        img_intensity = Image.new('LA', (size_x, size_y))
 
         # Record where output will be written
-        output_file = os.path.join(save_location, dateStr + ".png")
+        output_file_mask      = os.path.join(save_location_mask,      dateStr + ".png")
+        output_file_intensity = os.path.join(save_location_intensity, dateStr + ".png")
     
         sugar_count   = 0
         cloud_count   = 0
@@ -151,35 +160,43 @@ def generate_harvest_masks_nvdi(tile_x, tile_y, size_x=512, size_y=512, threshol
                 red = t.layers['B04'][y,x]
             
                 NVDI = (NIR - red)/(NIR + red)
+                NVDI_8bit = round(NVDI * 255)
             
                 if (t.layers[cloudMask][y,x]==(0, 0, 0, 255)):
                     cloud_count += 1
-                    img.putpixel((y, x), (255, 255, 0, 255))
+                    img_mask.putpixel((y, x), (255, 255, 0, 255))
+                    img_intensity.putpixel((y, x), (0, 128))
                 elif (t.layers['SugarMask'][y,x,] != (0, 0, 0, 255)):
                     sugar_count += 1
-                    img.putpixel((y, x), (0, 0, 0, 128))
-                elif (NVDI < threshold):
-                    harvest_count += 1
-                    img.putpixel((y, x), (255, 0, 0, 255))
+                    img_mask.putpixel((y, x), (0, 0, 0, 128))
+                    img_intensity.putpixel((y, x), (0, 0))
                 else:
-                    other_count += 1
-                    img.putpixel((y, x), (rgb_red, rgb_green, rgb_blue, 255))
-    
+                    if (NVDI < threshold):
+                        harvest_count += 1
+                        img_mask.putpixel((y, x), (255, 0, 0, 255))
+                    else:
+                        other_count += 1
+                        img_mask.putpixel((y, x), (rgb_red, rgb_green, rgb_blue, 255))
+                        
+                    img_intensity.putpixel((y, x), (NVDI_8bit, 255))
+                    
         if ((min_neighbours_harvested != 0) or (max_neighbours_unharvested != 0) and (neighbourhood_passes > 0)):
             for pass_number in range(1, neighbourhood_passes+1):
-                (local_count_reset, local_count_set, img2) = neighbourhood_pass(img, pass_number)
+                (local_count_reset, local_count_set, img_mask2) = neighbourhood_pass(img_mask, pass_number)
             
                 count_harvest_reset += local_count_reset
                 count_harvest_set   += local_count_set
             
-                img = img2
+                img_mask = img_mask2
             
                 if (local_count_reset + local_count_set == 0):
                     break;
             
-        print("Writing [" + output_file + "] Sugar: " + str(sugar_count) + " Cloud: " + str(cloud_count) + " Harvest: " + str(harvest_count) + " Other: " + str(other_count))
+        print("Writing [" + output_file_mask + "] Sugar: " + str(sugar_count) + " Cloud: " + str(cloud_count) + " Harvest: " + str(harvest_count) + " Other: " + str(other_count))
         print("Neighbours rules reset [" + str(count_harvest_reset) + "] and set [" + str(count_harvest_set) + "] pixels")
-        img.save(output_file)
+        img_mask.save(output_file_mask)
+        print("Writing [" + output_file_intensity + "]")
+        img_intensity.save(output_file_intensity)
     
     print("Finished!")
     

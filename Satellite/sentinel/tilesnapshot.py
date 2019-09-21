@@ -104,7 +104,7 @@ class tilesnapshot(object):
         '''
         Load sugar cane mask as 'SugarMask' layer
         '''
-        self.sugarCaneMaskPath = os.path.join("masks", "sugarcane-region", "mask-x" + self.tile_x + "-y" + self.tile_y + ".png")
+        self.sugarCaneMaskPath = os.path.join("masks", "sugarcane_region", "mask-x" + str(self.tile_x) + "-y" + str(self.tile_y) + ".png")
         self.loadLayer(self.sugarCaneMaskPath, 'SugarMask')
 
 
