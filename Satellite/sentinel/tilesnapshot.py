@@ -112,7 +112,7 @@ class tilesnapshot(object):
         '''
         Load cloud mask as 'CloudMask' layer
         '''
-        self.cloudMaskPath = os.path.join("masks", "cloud_masks", self.dateStr + ".png")
+        self.cloudMaskPath = os.path.join("masks", "cloud_masks", "mask-x" + str(self.tile_x) + "-y" + str(self.tile_y) + "-" + self.dateStr + ".png")
         self.loadLayer(self.cloudMaskPath, 'CloudMask')
         
 
@@ -120,7 +120,7 @@ class tilesnapshot(object):
         '''
         Load cloud mask as 'CrudeCloudMask' layer
         '''
-        self.cloudMaskPath = os.path.join("masks", "cloud_masks_crude", self.dateStr + ".png")
+        self.cloudMaskPath = os.path.join("masks", "cloud_masks_crude", "mask-x" + str(self.tile_x) + "-y" + str(self.tile_y) + "-" + self.dateStr + ".png")
         self.loadLayer(self.cloudMaskPath, 'CrudeCloudMask')
     
     
@@ -128,9 +128,15 @@ class tilesnapshot(object):
         '''
         Load harvest mask as 'HarvestMask' layer
         '''
-        self.harvestMaskPath = os.path.join("masks", "harvested_nvdi_masks", self.dateStr + ".png")
+        self.harvestMaskPath = os.path.join("masks", "harvested_nvdi_masks", "mask-x" + str(self.tile_x) + "-y" + str(self.tile_y) + "-" + self.dateStr + ".png")
         self.loadLayer(self.harvestMaskPath, 'HarvestMask')
-        
+    
+    def loadNVDIIntensity(self):
+        '''
+        Load NVDI intensity as 'NVDI' layer
+        '''
+        self.NVDIIntensityPath = os.path.join("masks", "nvdi_intensity", "mask-x" + str(self.tile_x) + "-y" + str(self.tile_y) + "-" + self.dateStr + ".png")
+        self.loadLayer(self.NVDIIntensityPath, 'NVDI')
              
     def loadLayer(self, fullPath, layerName):
         '''
@@ -208,7 +214,7 @@ class tilesnapshot(object):
                 else:
                     img.putpixel((x, y), (0,0,0,0))   # Transparent
     
-        output_file = os.path.join(save_location, self.dateStr + ".png")
+        output_file = os.path.join(save_location, "mask-x" + str(self.tile_x) + "-y" + str(self.tile_y) + "-" + self.dateStr + ".png")
 
         print("Writing Cloud Mask [" + output_file + "]")    
         img.save(output_file)

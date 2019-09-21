@@ -137,8 +137,8 @@ def generate_harvest_masks_nvdi(tile_x, tile_y, size_x=512, size_y=512, threshol
         img_intensity = Image.new('LA', (size_x, size_y))
 
         # Record where output will be written
-        output_file_mask      = os.path.join(save_location_mask,      dateStr + ".png")
-        output_file_intensity = os.path.join(save_location_intensity, dateStr + ".png")
+        output_file_mask      = os.path.join(save_location_mask,      "mask-x" + str(tile_x) + "-y" + str(tile_y) + "-" + dateStr + ".png")
+        output_file_intensity = os.path.join(save_location_intensity, "mask-x" + str(tile_x) + "-y" + str(tile_y) + "-" + dateStr + ".png")
     
         sugar_count   = 0
         cloud_count   = 0
