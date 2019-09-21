@@ -31,15 +31,12 @@ class tileseries(object):
         self.x = x
         self.y = y
         
-        # Work out basePath from x and y
-        self.basePath = 'data/sentinel-2a-tile-' + str(self.x) + 'x-' + str(self.y) + 'y'
-        
         # Load the geometry for this tile
-        self.geometryPath = self.basePath + "/geometry/file-x" + str(self.x) + "-y" + str(self.y) + ".geojson"
+        self.geometryPath = os.path.join("geometries", "geo-x" + str(self.x) + "-y" + str(self.y) + ".geojson")
         self.geometry = geometry(self.geometryPath)
         
         # List available snapshots
-        self.timeSeriesFilter = self.basePath + "/metadata/*.json"
+        self.timeSeriesFilter = os.path.join("metadata", "*.json")
         self.timeSeriesList   = glob.glob(self.timeSeriesFilter)
         
         self.snapshots = dict()

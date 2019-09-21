@@ -55,24 +55,23 @@ class tilesnapshot(object):
         
         # List of "band" layers that are required for cloud detection
         self.band_list        = ['B01', 'B02', 'B04', 'B05', 'B08', 'B8A', 'B09', 'B10', 'B11', 'B12']
-        
-        # Work out basePath from x and y
-        self.basePath         = 'data/sentinel-2a-tile-' + str(self.tile_x) + 'x-' + str(self.tile_y) + 'y'
-        
+                
         # Load the geometry for this tile
-        self.geometryPath     = self.basePath + "/geometry/file-x" + str(self.tile_x) + "-y" + str(self.tile_y) + ".geojson"
+        self.geometryPath     = os.path.join("geometries", "geo-x" + str(self.tile_x) + "-y" + str(self.tile_y) + ".geojson")
+        
         self.geometry         = geometry(self.geometryPath)
         
         # Load the metadata for this snapshot as a child object
-        self.metadataPath     = self.basePath + "/metadata/" + dateStr + ".json"
-        self.metadataPath_c   = self.basePath + "/metadata/" + dateStr + "-cloud.json"
+        self.metadataPath     = os.path.join("metadata", dateStr + ".json")
+        self.metadataPath_c   = os.path.join("metadata", dateStr + "-cloud.json")
+        
         if (os.path.exists(self.metadataPath_c)):
             self.metadata     = metadata(self.metadataPath_c, clouds=1)
         else:
             self.metadata     = metadata(self.metadataPath)
         
         # List available layers
-        self.layerFilesFilter = self.basePath + "/timeseries/" + str(self.tile_x) + "-" + str(self.tile_y) + "-*-" + self.dateStr + ".png"
+        self.layerFilesFilter = os.path.join("sugarcanetiles", str(self.tile_x) + "-" + str(self.tile_y) + "-*-" + self.dateStr + ".png")
         self.layerList        = glob.glob(self.layerFilesFilter)
         
         # Create dictionaries for layer data
@@ -105,8 +104,7 @@ class tilesnapshot(object):
         '''
         Load sugar cane mask as 'SugarMask' layer
         '''
-        #self.sugarCaneMaskPath = self.basePath + "/masks/sugarcane-region-mask.png"
-        self.sugarCaneMaskPath = self.basePath + "/masks/sugarcane-region-mask-update.png"
+        self.sugarCaneMaskPath = os.path.join("masks", "sugarcane-region", "mask-x" + self.tile_x + "-y" + self.tile_y + ".png")
         self.loadLayer(self.sugarCaneMaskPath, 'SugarMask')
 
 
@@ -114,7 +112,7 @@ class tilesnapshot(object):
         '''
         Load cloud mask as 'CloudMask' layer
         '''
-        self.cloudMaskPath = self.basePath + "/masks/cloud_masks/" + self.dateStr + ".png"
+        self.cloudMaskPath = os.path.join("masks", "cloud_masks", self.dateStr + ".png")
         self.loadLayer(self.cloudMaskPath, 'CloudMask')
         
 
@@ -122,7 +120,7 @@ class tilesnapshot(object):
         '''
         Load cloud mask as 'CrudeCloudMask' layer
         '''
-        self.cloudMaskPath = self.basePath + "/masks/crude_cloud_masks/" + self.dateStr + ".png"
+        self.cloudMaskPath = os.path.join("masks", "cloud_masks_crude", self.dateStr + ".png")
         self.loadLayer(self.cloudMaskPath, 'CrudeCloudMask')
     
     
@@ -130,7 +128,7 @@ class tilesnapshot(object):
         '''
         Load harvest mask as 'HarvestMask' layer
         '''
-        self.harvestMaskPath = self.basePath + "/masks/harvested_nvdi_masks/" + self.dateStr + ".png"
+        self.harvestMaskPath = os.path.join("masks", "harvested_nvdi_masks", self.dateStr + ".png")
         self.loadLayer(self.harvestMaskPath, 'HarvestMask')
         
              
@@ -195,8 +193,7 @@ class tilesnapshot(object):
         
         # Save cloud mask to disk as black PNG that is transparent where there is no cloud,
         # and opaque where the probability of cloud > threshold
-        #save_location = "data\\sentinel-2a-tile-" + str(self.tile_x) + "x-" + str(self.tile_y) + "y\\Masks\\cloud_masks"
-        save_location = os.path.join("data", "sentinel-2a-tile-" + str(self.tile_x) + "x-" + str(self.tile_y) + "y", "Masks", "cloud_masks")
+        save_location = os.path.join("masks", "cloud_masks")
         os.makedirs(save_location, exist_ok=True)
     
         img = Image.new('RGBA', (self.size_x, self.size_y), color = 'black')
@@ -211,10 +208,9 @@ class tilesnapshot(object):
                 else:
                     img.putpixel((x, y), (0,0,0,0))   # Transparent
     
-        #output_file = save_location + "\\" + self.dateStr + ".png"
         output_file = os.path.join(save_location, self.dateStr + ".png")
 
-        print("Writing [" + output_file + "]")    
+        print("Writing Cloud Mask [" + output_file + "]")    
         img.save(output_file)
         self.metadata.setCloudCount(self.cloudCount)
         

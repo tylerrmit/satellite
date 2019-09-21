@@ -10,19 +10,12 @@ import os
 from sentinel.tilesnapshot import tilesnapshot
 
 def generate_cloud_mask(tile_x, tile_y, size_x=512, size_y=512, threshold=0.7):
-    tile_x    = 7680
-    tile_y    = 10240
-    size_x    = 512
-    size_y    = 512
-    threshold = 0.7    # Minimum probability of cloud, for a pixel to be masked
-
-    # Base location for data
-    basePath = os.path.join("data", "sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y")
-
     # List available snapshots
-    timeSeriesFilter = os.path.join(basePath, "timeseries", str(tile_x) + "-" + str(tile_y) + "-B01-*.png")
+    timeSeriesFilter = os.path.join("sugarcanetiles", str(tile_x) + "-" + str(tile_y) + "-B01-*.png")
     timeSeriesList   = glob.glob(timeSeriesFilter)
 
+    print("Searching for tiles: [" + timeSeriesFilter + "]")
+    
     # Process each snapshot
     for i in range(len(timeSeriesList)):
         print("Processing [" + timeSeriesList[i].replace('B01', '*') + "]")
@@ -38,7 +31,10 @@ def generate_cloud_mask(tile_x, tile_y, size_x=512, size_y=512, threshold=0.7):
         t = tilesnapshot(tile_x, tile_y, dateStr, size_x, size_y)
         t.detectClouds(threshold)
 
-        print("Finished! " + str(tile_x) + ", " + str(tile_y))
+        print("Finished " + str(tile_x) + ", " + str(tile_y))
 
-# Test cloud generation on phase1 example tile
-#generate_cloud_mask(tile_x=7680, tile_y=10240)
+    print("Finished!")
+
+if __name__ == "__main__":
+    # Test cloud generation on phase1 example tile
+    generate_cloud_mask(tile_x=7680, tile_y=10240)

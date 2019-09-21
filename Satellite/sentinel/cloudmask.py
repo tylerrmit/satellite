@@ -21,11 +21,8 @@ class cloudmask(object):
         '''
     
     def generate_cloud_mask(self, tile_x, tile_y, size_x=512, size_y=512, threshold=0.7):
-        # Base location for data
-        basePath = os.path.join("data", "sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y")
-
         # List available snapshots
-        timeSeriesFilter = os.path.join(basePath, "timeseries", str(tile_x) + "-" + str(tile_y) + "-B01-*.png")
+        timeSeriesFilter = os.path.join("sugarcanetiles", str(tile_x) + "-" + str(tile_y) + "-B01-*.png")
         timeSeriesList   = glob.glob(timeSeriesFilter)
 
         # Process each snapshot

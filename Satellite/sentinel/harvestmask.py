@@ -34,16 +34,13 @@ class harvestmask(object):
         #cloudMask = 'CrudeCloudMask'
         cloudMask = 'CloudMask'
 
-        # Base location for data
-        basePath = os.path.join("data", "sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y")
-
         # Location for output - create this directory if it does not already exist
-        save_location = os.path.join("data", "sentinel-2a-tile-" + str(tile_x) + "x-" + str(tile_y) + "y", "Masks", "harvested_nvdi_masks")
+        save_location = os.path.join("masks", "harvested_nvdi_masks")
         os.makedirs(save_location, exist_ok=True)
 
         # List available snapshots
         # Just look for the "B01" image as an indicator of which dates are available
-        timeSeriesFilter = os.path.join(basePath, "timeseries", str(tile_x) + "-" + str(tile_y) + "-B01-*.png")
+        timeSeriesFilter = os.path.join("sugarcanetiles", str(tile_x) + "-" + str(tile_y) + "-B01-*.png")
         timeSeriesList   = glob.glob(timeSeriesFilter)
 
         # Helper function to check if a pixel is harvested
