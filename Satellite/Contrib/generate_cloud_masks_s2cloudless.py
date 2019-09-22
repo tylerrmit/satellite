@@ -9,7 +9,7 @@ import os
 
 from sentinel.tilesnapshot import tilesnapshot
 
-def generate_cloud_mask(tile_x, tile_y, size_x=512, size_y=512, threshold=0.7):
+def generate_cloud_masks(tile_x, tile_y, size_x=512, size_y=512, threshold=0.7):
     # List available snapshots
     timeSeriesFilter = os.path.join("sugarcanetiles", str(tile_x) + "-" + str(tile_y) + "-B01-*.png")
     timeSeriesList   = glob.glob(timeSeriesFilter)
@@ -37,4 +37,4 @@ def generate_cloud_mask(tile_x, tile_y, size_x=512, size_y=512, threshold=0.7):
 
 if __name__ == "__main__":
     # Test cloud generation on phase1 example tile
-    generate_cloud_mask(tile_x=7680, tile_y=10240)
+    generate_cloud_masks(tile_x=7680, tile_y=10240)

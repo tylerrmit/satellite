@@ -123,7 +123,13 @@ class tilesnapshot(object):
         self.cloudMaskPath = os.path.join("masks", "cloud_masks_crude", "mask-x" + str(self.tile_x) + "-y" + str(self.tile_y) + "-" + self.dateStr + ".png")
         self.loadLayer(self.cloudMaskPath, 'CrudeCloudMask')
     
-    
+    def loadDaysSinceHarvest(self):
+        '''
+        Load harvest mask as 'HarvestMask' layer
+        '''
+        self.daysSinceHarvestPath = os.path.join("masks", "days_since_harvest", "mask-x" + str(self.tile_x) + "-y" + str(self.tile_y) + "-" + self.dateStr + ".png")
+        self.loadLayer(self.daysSinceHarvestPath, 'DaysSinceHarvest')
+        
     def loadHarvestMask(self):
         '''
         Load harvest mask as 'HarvestMask' layer
@@ -131,6 +137,13 @@ class tilesnapshot(object):
         self.harvestMaskPath = os.path.join("masks", "harvested_nvdi_masks", "mask-x" + str(self.tile_x) + "-y" + str(self.tile_y) + "-" + self.dateStr + ".png")
         self.loadLayer(self.harvestMaskPath, 'HarvestMask')
     
+    def loadHarvested(self):
+        '''
+        Load harvest mask as 'HarvestMask' layer
+        '''
+        self.harvestMaskPath = os.path.join("masks", "harvested", "mask-x" + str(self.tile_x) + "-y" + str(self.tile_y) + "-" + self.dateStr + ".png")
+        self.loadLayer(self.harvestMaskPath, 'Harvested')
+        
     def loadNVDIIntensity(self):
         '''
         Load NVDI intensity as 'NVDI' layer

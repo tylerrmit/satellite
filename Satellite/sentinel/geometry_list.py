@@ -55,8 +55,8 @@ class geometry_list(object):
             g.print()
             
     def findTile(self, longitude, latitude):
-        print("Latitude:  " + str(latitude))
-        print("Longitude: " + str(longitude))
+        #print("Latitude:  " + str(latitude))
+        #print("Longitude: " + str(longitude))
         
         # Iterate through every tile
         for tile in self.geometries.keys():

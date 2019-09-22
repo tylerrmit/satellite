@@ -158,8 +158,12 @@ def generate_harvest_masks_nvdi(tile_x, tile_y, size_x=512, size_y=512, threshol
             
                 NIR = t.layers['B08'][y,x]
                 red = t.layers['B04'][y,x]
-            
-                NVDI = (NIR - red)/(NIR + red)
+                
+                if (NIR + red != 0):
+                    NVDI = (NIR - red)/(NIR + red)
+                else:
+                    NVDI = 0
+                    
                 NVDI_8bit = round(NVDI * 255)
             
                 if (t.layers[cloudMask][y,x]==(0, 0, 0, 255)):
