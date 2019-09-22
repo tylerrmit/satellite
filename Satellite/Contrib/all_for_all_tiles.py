@@ -24,3 +24,4 @@ for i in range(len(geometriesList)):
     print("Doing everything for " + tile_x + ", " + tile_y);
     
     all_for_one_tile(tile_x=tile_x, tile_y=tile_y)
+    

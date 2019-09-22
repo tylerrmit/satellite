@@ -143,7 +143,7 @@ class tilesnapshot(object):
         '''
         self.harvestMaskPath = os.path.join("masks", "harvested", "mask-x" + str(self.tile_x) + "-y" + str(self.tile_y) + "-" + self.dateStr + ".png")
         self.loadLayer(self.harvestMaskPath, 'Harvested')
-        
+    
     def loadNVDIIntensity(self):
         '''
         Load NVDI intensity as 'NVDI' layer

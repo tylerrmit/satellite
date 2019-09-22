@@ -77,5 +77,6 @@ class farm(object):
         dateEnd   = dateStart + 10
         dateStr   = baseName[dateStart:dateEnd]
 
-        return dateStr    
+        return dateStr
+    
         

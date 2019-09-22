@@ -129,4 +129,5 @@ def generate_days_since_harvest(tile_x, tile_y, size_x=512, size_y=512):
         
 if __name__ == "__main__":
     # Test delta harvest on phase1 example tile
-    generate_days_since_harvest(tile_x=7680, tile_y=10240)       
+    generate_days_since_harvest(tile_x=7680, tile_y=10240)
+        

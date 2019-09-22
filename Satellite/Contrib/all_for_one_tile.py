@@ -28,3 +28,4 @@ def all_for_one_tile(tile_x, tile_y):
 if __name__ == "__main__":
     # Test delta harvest on phase1 example tile
     all_for_one_tile(tile_x=7680, tile_y=10240)
+    
