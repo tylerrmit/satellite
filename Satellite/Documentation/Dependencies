@@ -26,32 +26,3 @@ conda install nb_conda
 jupyter nbextension enable codefolding/main
 
 conda install -c conda-forge jupyter_nbextensions_configurator
-
-gdal is hard and needed for geopandas!
-
-https://sandbox.idre.ucla.edu/sandbox/tutorials/installing-gdal-for-windows
-
-Follow all instructions.
-
-GDAL 3.0.0 is not yet supported!  Install 2.4.2!!!
-
-When you run:
-
-gdalinfo --version
-
-you might get an error accessing ogr_MSSQLSpatial.dll.  This is because MS SQL Native Client is not installed.
-Move it to another directory and the problem will go away.
-
-fiona -- hard again
-
-https://stackoverflow.com/questions/54759284/provide-a-path-to-gdal-config-using-a-gdal-config-environment-variable-error-whi
-
-Download a "whl" and install from that:
-
-pip install Fiona-1.8.6-cp37-cp37m-win_amd64.whl
-
-geopandas ... easy after you've insatlled the GDAL tools and Fiona!
-
-GeoLibrary
-
-...

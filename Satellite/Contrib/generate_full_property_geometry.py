@@ -55,9 +55,7 @@ if __name__ == "__main__":
             geom = prop.shape.__geo_interface__
 
             buffer.append(dict(type="Feature", geometry=geom, properties=atr))
-        #else:
-            #print(".", end='')
-            
+
     #Write and save geoJSON here
     geojson = open("FullProperty.geojson", "w")
     geojson.write(json.dumps({"type": "FeatureCollection","features": buffer}, indent=2) + "\n")
