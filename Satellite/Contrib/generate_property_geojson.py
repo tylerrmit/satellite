@@ -69,6 +69,7 @@ if __name__ == "__main__":
             tileName=GetTileName(xCoord,yCoord)
             GeoJsonFile=GetGeoJSONName(xCoord,yCoord)
             #propGeoJson=GetPropGeoJSONName(xCoord,yCoord)
+            os.makedirs("prop_geometries", exist_ok=True)
             propGeoJson=os.path.join("prop_geometries", "prop-"+ "x"+str(xCoord)+"-"+"y"+str(yCoord)+".geojson")
             print("All Names", posX,posY,GeoJsonFile,propGeoJson)
             GeneratePropertyGeoJson(posX,posY,GeoJsonFile,propGeoJson)
