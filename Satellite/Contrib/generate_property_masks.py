@@ -62,34 +62,26 @@ def GeneratePropertyMask(tileXPos,tileYPos,tileImageFilePath,geoJSONPath,propGeo
 
     tile=geometry.GeometryCollection([geometry.shape(feature["geometry"]).buffer(0) for feature in geo_json_features])
 
-    properties = geometry.GeometryCollection([geometry.shape(feature["geometry"]).buffer(0) for feature in property_geo_json_features])
+    properties = [geometry.shape(feature["geometry"]).buffer(0) for feature in property_geo_json_features]
 
     img = Image.open(tileImageFilePath)
 
 
     pixels=img.load()
 
-    result = geometry.GeometryCollection()
-
-    '''
-    for i in range(0,img.size[0],RAWNESS):
-        for j in range(0,img.size[1],RAWNESS):
-            lat_long=GetLatLongForCoords(GRID_WIDTH*(tileXPos)+i,GRID_HEIGHT*(tileYPos)+j)
-            for property in properties:
-                if property.exterior.intersects(geometry.Point(lat_long)):
-                    pixels[i,j]=(255,0,0)
-    '''
+    #Run time is super long, loops here is pretty inefficient
     for property in properties:
-        if property.intersects(tile):
-            result = result.union(geometry.shape(property).intersection(tile))
-
-    if tile.intersects(result):
         for i in range(0,img.size[0],RAWNESS):
             for j in range(0,img.size[1],RAWNESS):
-                lat_long=GetLatLongForCoords(GRID_WIDTH*(tileXPos)+i,GRID_HEIGHT*(tileYPos)+j)
-                if result.intersects(geometry.Point(lat_long)):
-                    pixels[i,j]=(255,0,0)
+                current_point=geometry.Point(GetLatLongForCoords(GRID_WIDTH*(tileXPos)+i,GRID_HEIGHT*(tileYPos)+j))
+                above_point=geometry.Point(GetLatLongForCoords(GRID_WIDTH*(tileXPos)+i,GRID_HEIGHT*(tileYPos)+j+1))
+                below_point=geometry.Point(GetLatLongForCoords(GRID_WIDTH*(tileXPos)+i,GRID_HEIGHT*(tileYPos)+j-1))
+                before_point=geometry.Point(GetLatLongForCoords(GRID_WIDTH*(tileXPos)+i-1,GRID_HEIGHT*(tileYPos)+j))
+                after_point=geometry.Point(GetLatLongForCoords(GRID_WIDTH*(tileXPos)+i+1,GRID_HEIGHT*(tileYPos)+j))
 
+                #TODO how to do this bit?
+                if property.intersects(current_point):
+                    pixels[i,j]=(255,0,0)
 
     img.save(outputFileName)
 
