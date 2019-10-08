@@ -150,6 +150,14 @@ class tilesnapshot(object):
         '''
         self.NVDIIntensityPath = os.path.join("masks", "nvdi_intensity", "mask-x" + str(self.tile_x) + "-y" + str(self.tile_y) + "-" + self.dateStr + ".png")
         self.loadLayer(self.NVDIIntensityPath, 'NVDI')
+        
+    def loadGNVDIIntensity(self):
+        '''
+        Load GNVDI intensity as 'GNVDI' layer
+        '''
+        self.NVDIIntensityPath = os.path.join("masks", "gnvdi_intensity", "mask-x" + str(self.tile_x) + "-y" + str(self.tile_y) + "-" + self.dateStr + ".png")
+        self.loadLayer(self.GNVDIIntensityPath, 'GNVDI')
+        
              
     def loadLayer(self, fullPath, layerName):
         '''

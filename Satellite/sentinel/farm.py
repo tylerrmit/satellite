@@ -28,10 +28,11 @@ class farm(object):
         '''
     
         # Geocode address into coords
-        self.address = address 
-        self.coords  = self.addressGeocode(address)
-        self.dates   = []
-        self.img     = "N/A"
+        self.address  = address 
+        self.coords   = self.addressGeocode(address)
+        self.dates    = []
+        self.img      = "N/A"
+        self.boundary = "N/A"
         
         if (self.coords != "N/A"):
             # Load geometry data
@@ -105,7 +106,6 @@ class farm(object):
                 #print("FOUND IT!")
                 return feature
                                                          
-        self.boundary = "N/A"
         return "N/A"
     
     def swapLatLon(self, coord):
@@ -157,9 +157,29 @@ class farm(object):
         
         return self.swapLatLon(retLatLon)
     
-    def getBoundary(self, size_x=512, size_y=512):
+    def getBoundary(self, size_x=512, size_y=512, force=False):
+        # Return the img if already loaded
+        if (self.img != "N/A"):
+            return self.img
+        
+        # Find the "shape" of the boundary, if we haven't already
+        if (self.boundary == "N/A"):
+            self.boundary = self.getFeature()
+        
+        # If the "shape" of the boundary cannot be found, that's all we can do
         if (self.boundary == "N/A"):
             return "N/A"
+        
+        # Check if the "img" has already been cached, and just open it if it is there
+        os.makedirs("cached_property_images", exist_ok=True)
+        
+        cache_file = os.path.join("cached_property_images", self.boundary['properties']['LOT'] + "_" + self.boundary['properties']['PLAN'] + ".png")
+
+        if (os.path.exists(cache_file) and (force == False)):
+            self.img = Image.open(cache_file)
+            return self.img
+        
+        print("Isolating farm", end='')
         
         with open(os.path.join("geometries", "geo-x" + str(self.tile_x) + "-y" + str(self.tile_y) + ".geojson")) as f1:
             geo_json_features = json.load(f1)["features"]
@@ -202,6 +222,11 @@ class farm(object):
                                     # This is part of the border!
                                     self.img.putpixel((y, x), (255, 0, 0, 255))
                                     
+        # Save the image to the cache
+        self.img.save(cache_file)
+        
+        print(" done")
+        
         return self.img
                
     # Helper function to get dateStr from full path of time series PNG
