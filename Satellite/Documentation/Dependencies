@@ -26,3 +26,6 @@ conda install nb_conda
 jupyter nbextension enable codefolding/main
 
 conda install -c conda-forge jupyter_nbextensions_configurator
+
+pip install jupyter_contrib_nbextensions
+jupyter contrib nbextension install --user
